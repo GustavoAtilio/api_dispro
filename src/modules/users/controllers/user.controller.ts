@@ -1,4 +1,7 @@
-import { Body, Controller, HttpException, HttpStatus, Post } from "@nestjs/common";
+import { Body, Controller, HttpException, HttpStatus, Post, UseInterceptors } from "@nestjs/common";
+import { ValidatorInterceptor } from "src/shared/interceptors/validator.interceptor";
+import {  UserCreateContract } from "../contracts/user-create.contract";
+import { UserLoginContract } from "../contracts/user-login.contract";
 import { ResponseDto } from "../dtos/response.dto";
 import { UserEntity } from "../entities/user.entity";
 import { UserService } from "../services/user.service";
@@ -11,6 +14,7 @@ export class UserController{
     ){}
 
     @Post('/create')
+    @UseInterceptors(new ValidatorInterceptor(new UserCreateContract()))
     async createUser(@Body() body:UserEntity){
         try{
             const user = await this.createUser(body);
@@ -21,6 +25,7 @@ export class UserController{
     }
 
     @Post('/login')
+    @UseInterceptors(new ValidatorInterceptor(new UserLoginContract()))
     async loginUser(@Body() body:UserEntity){
 
     }

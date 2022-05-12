@@ -20,9 +20,11 @@ export class UserService{
     async loginUserService(user:UserEntity){
         const userdb = await this.repository.findOne(
             {
-             email:user.email, 
-             number:user.number,
-             name:user.name,
+            where:[
+             {email:user.email}, 
+             {number:user.number},
+             {name:user.name},
+            ]
             });
         if(!userdb) throw new Error("Usuário ou senha inserido está incorreto,tente novamente.")
 

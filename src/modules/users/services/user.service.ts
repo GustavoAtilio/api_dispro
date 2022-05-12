@@ -1,9 +1,9 @@
+import { HttpStatus } from '@nestjs/common';
+import { UserModel } from './../models/userModel';
 import { InjectRepository } from "@nestjs/typeorm";
-import { throws } from "assert";
 import { AppError } from "src/shared/errors/error";
 import { Security } from "src/shared/security/hash.security";
 import { Repository } from 'typeorm';
-import { UserDto } from "../dtos/user.dto";
 import { UserEntity } from "../entities/user.entity";
 
 
@@ -15,26 +15,39 @@ export class UserService{
         private readonly security: Security,
     ){}
 
-    async createUserService(user:UserEntity){
+    async createUserService(user:UserModel){
+        const userdb = await this.getuser(user);
+        let errors: any[] = [];
+        if(userdb){
+            if(user.name == userdb.name) errors.push("Nome do usuário já existe.")
+            if(user.email == userdb.email) errors.push("Email do usuário já existe.")
+            if(user.number == userdb.number) errors.push("Número do usuário já existe.")
+        }
+        if(errors.length != 0) throw new AppError("Verificar os dados.",errors,HttpStatus.BAD_REQUEST)
+
         user.password = await this.security.hashPassword(user.password);
         await this.repository.save(user);
     }
 
-    async loginUserService(user:UserDto){
-        const userdb = await this.repository.findOne(
-            {
-            where:[
-             {email:user.userName}, 
-             {number:user.userName},
-             {name:user.userName},
-            ]
-            });
-        if(!userdb) throw new AppError("Usuário ou senha inserido está incorreto,tente novamente.")
+    async loginUserService(user:UserModel){
+        const userdb = await this.getuser(user);
+        if(!userdb) throw new AppError("Usuário ou senha inserido está incorreto,tente novamente.",null,HttpStatus.BAD_REQUEST)
 
         const valid = await this.security.comparePassword(user.password, userdb.password);
-        if(!valid) throw new AppError("Usuário ou senha inserido está incorreto,tente novamente.")
+        if(!valid) throw new AppError("Usuário ou senha inserido está incorreto,tente novamente.",null,HttpStatus.BAD_REQUEST)
 
         return user;
+    }
+
+    async getuser(user:UserModel):Promise<UserEntity|undefined>{
+        return await this.repository.findOne(
+            {
+            where:[
+             {email:user.email}, 
+             {number:user.number},
+             {name:user.name},
+            ]
+            });
     }
 }
 

@@ -6,6 +6,7 @@ import { UserLoginContract } from "../contracts/user-login.contract";
 import { ResponseDto } from "../dtos/response.dto";
 import { UserDto } from "../dtos/user.dto";
 import { UserEntity } from "../entities/user.entity";
+import { UserModel } from "../models/userModel";
 import { UserService } from "../services/user.service";
 
 @Controller('/users')
@@ -18,7 +19,8 @@ export class UserController{
     @Post('/create')
     @UseInterceptors(new ValidatorInterceptor(new UserCreateContract()))
     @UseInterceptors(new ErrorsInterceptor())
-    async createUser(@Body() body:UserEntity){
+    async createUser(@Body() body:UserModel){
+
          const user = await this.service.createUserService(body);
          return new ResponseDto('Usuário Criado com Sucesso.',true,user,null);
     }
@@ -27,7 +29,8 @@ export class UserController{
     @UseInterceptors(new ValidatorInterceptor(new UserLoginContract()))
     @UseInterceptors(new ErrorsInterceptor())
     async loginUser(@Body() body:UserDto){
-        const user = await this.service.loginUserService(body);
+
+        const user = await this.service.loginUserService(new UserModel(body.userName, body.userName,body.userName,body.password));
         return new ResponseDto('Usuário Autenticado..',true,user,null);
     }
     

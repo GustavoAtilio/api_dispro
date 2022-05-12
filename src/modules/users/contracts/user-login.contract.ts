@@ -8,9 +8,10 @@ export class UserLoginContract implements Contract{
         const flunt = new Flunt()
 
         //Validação Nome de Usuário
+        flunt.isRequired(model.userName, "Informe um UserName de usuário correto.")
         flunt.hasMinLen(model.userName, 5, 'UserName deve ser maior que 5 caracteres.');
         flunt.hasMaxLen(model.userName, 100, 'UserName deve ser menor que 100 caracteres.');
-        flunt.isNotNull(model.userName, "Informe um UserName de usuário correto.")
+        
 
         //Validação Senha do Usuário
         flunt.isNotNull(model.password, "Informe uma senha válida.")        

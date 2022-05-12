@@ -5,10 +5,12 @@ import { UserEntity } from './entities/user.entity';
 import { UserService } from './services/user.service';
 import { Security } from 'src/shared/security/hash.security';
 
+
 @Module({
     imports:[TypeOrmModule.forFeature([
         UserEntity,
-      ])],
+      ]),
+    ],
     controllers:[
         UserController,
     ],

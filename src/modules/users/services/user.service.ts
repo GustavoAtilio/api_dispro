@@ -35,8 +35,8 @@ export class UserService{
 
         const valid = await this.security.comparePassword(user.password, userdb.password);
         if(!valid) throw new AppError("Usuário ou senha inserido está incorreto,tente novamente.",null,HttpStatus.BAD_REQUEST)
-
-        return user;
+        const {id, name, email} = userdb;
+        return {id, name, email};
     }
 
     async getuser(user:UserModel):Promise<UserEntity|undefined>{

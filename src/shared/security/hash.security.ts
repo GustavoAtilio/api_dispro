@@ -1,6 +1,11 @@
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 
 export class Security{
+
+    constructor(
+        private jwtService: JwtService,
+    ){}
 
     private saltOrRounds: number = 10;
 
@@ -11,5 +16,6 @@ export class Security{
     async comparePassword(pass:string, hash:string):Promise<boolean>{
         return await bcrypt.compare(pass, hash);
     }
+
 
 }

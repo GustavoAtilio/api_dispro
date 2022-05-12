@@ -15,8 +15,9 @@ import {
   export class ErrorsInterceptor implements NestInterceptor {
     intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
         return next.handle().pipe(
+         
             catchError(err => throwError(() => {
-               
+       
                 if(err instanceof AppError){
                     throw new HttpException(new ResponseDto(
                         err.message,
@@ -26,7 +27,7 @@ import {
                         ), err.status);
                 }
                
-               throw new HttpException(err,HttpStatus.INTERNAL_SERVER_ERROR);
+               throw new HttpException(new ResponseDto("Ops!!", false,null,"Um errro inesperado."), HttpStatus.BAD_REQUEST);
             })),
           );
           

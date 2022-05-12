@@ -1,8 +1,11 @@
 import { InjectRepository } from "@nestjs/typeorm";
 import { throws } from "assert";
+import { AppError } from "src/shared/errors/error";
 import { Security } from "src/shared/security/hash.security";
 import { Repository } from 'typeorm';
+import { UserDto } from "../dtos/user.dto";
 import { UserEntity } from "../entities/user.entity";
+
 
 
 export class UserService{
@@ -17,19 +20,19 @@ export class UserService{
         await this.repository.save(user);
     }
 
-    async loginUserService(user:UserEntity){
+    async loginUserService(user:UserDto){
         const userdb = await this.repository.findOne(
             {
             where:[
-             {email:user.email}, 
-             {number:user.number},
-             {name:user.name},
+             {email:user.userName}, 
+             {number:user.userName},
+             {name:user.userName},
             ]
             });
-        if(!userdb) throw new Error("Usuário ou senha inserido está incorreto,tente novamente.")
+        if(!userdb) throw new AppError("Usuário ou senha inserido está incorreto,tente novamente.")
 
         const valid = await this.security.comparePassword(user.password, userdb.password);
-        if(!valid) throw new Error("Usuário ou senha inserido está incorreto,tente novamente.")
+        if(!valid) throw new AppError("Usuário ou senha inserido está incorreto,tente novamente.")
 
         return user;
     }

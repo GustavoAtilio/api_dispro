@@ -2,6 +2,7 @@ import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateCol
 
 @Entity()
 export class UserEntity{
+
     @PrimaryGeneratedColumn("uuid")
     id:string;
 
